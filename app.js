@@ -1,0 +1,1 @@
+console.log('Crypto Search Tool Loaded');
