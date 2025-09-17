@@ -162,7 +162,8 @@ def generate_random_walk(
     
     for _ in range(steps - 1):
         # Random walk with trend and volatility
-        change = np.random.normal(trend, volatility)
+        import random
+        change = random.gauss(trend, volatility)  # Use random.gauss instead of np.random.normal
         current *= (1 + change)
         values.append(current)
     
@@ -199,12 +200,20 @@ def detect_outliers(data: List[float], threshold: float = 2.0) -> List[bool]:
     Returns:
         Boolean list indicating outliers
     """
-    if len(data) < 3:
-        return [False] * len(data)
-    
-    df = pd.Series(data)
-    z_scores = np.abs((df - df.mean()) / df.std())
-    return (z_scores > threshold).tolist()
+    if HAS_PANDAS:
+        df = pd.Series(data)
+        z_scores = abs((df - df.mean()) / df.std())
+        return (z_scores > threshold).tolist()
+    else:
+        # Simple outlier detection without pandas
+        if len(data) < 3:
+            return [False] * len(data)
+        
+        mean_val = sum(data) / len(data)
+        variance = sum((x - mean_val) ** 2 for x in data) / len(data)
+        std_val = variance ** 0.5
+        
+        return [abs(x - mean_val) / std_val > threshold for x in data]
 
 
 def safe_divide(numerator: float, denominator: float, default: float = 0.0) -> float:

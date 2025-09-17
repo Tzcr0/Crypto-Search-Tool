@@ -455,7 +455,7 @@ class PhantomOracle:
         # Calculate price volatility
         price_changes = [abs(prices[i] - prices[i-1]) / prices[i-1] 
                         for i in range(1, len(prices))]
-        avg_volatility = np.mean(price_changes)
+        avg_volatility = sum(price_changes) / len(price_changes) if price_changes else 0
         
         if avg_volatility > 0.03:
             level = "high"
@@ -478,8 +478,10 @@ class PhantomOracle:
         prices = [item.get("price", 0) for item in price_data[-15:]]
         
         # Simple momentum calculation
-        short_term = np.mean(prices[-5:])
-        long_term = np.mean(prices[-15:-5])
+        short_term_prices = prices[-5:]
+        long_term_prices = prices[-15:-5]
+        short_term = sum(short_term_prices) / len(short_term_prices) if short_term_prices else 0
+        long_term = sum(long_term_prices) / len(long_term_prices) if long_term_prices else 0
         
         momentum = (short_term - long_term) / long_term
         

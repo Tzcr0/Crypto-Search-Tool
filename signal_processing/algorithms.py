@@ -145,7 +145,7 @@ class SignalProcessor:
                     recent_prices = [t.get("price", 0) for t in self.price_buffer[-10:]]
                     
                     if recent_prices:
-                        avg_recent_price = np.mean(recent_prices)
+                        avg_recent_price = sum(recent_prices) / len(recent_prices)
                         price_deviation = abs(current_price - avg_recent_price) / avg_recent_price
                         
                         # Check if price deviation exceeds threshold
@@ -457,7 +457,8 @@ class SignalProcessor:
         
         # Check for sudden volume spike with price reversal
         current_volume = volumes[-1]
-        avg_volume = np.mean(volumes[-10:-1])
+        recent_volumes = volumes[-10:-1]
+        avg_volume = sum(recent_volumes) / len(recent_volumes) if recent_volumes else 0
         
         if current_volume > avg_volume * 2:  # Volume spike
             price_change = (prices[-1] - prices[-2]) / prices[-2]

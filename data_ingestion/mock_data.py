@@ -105,7 +105,7 @@ class MockDataGenerator:
         
         # Generate price change with trend bias
         trend_factor = self.trend_direction * self.trend_strength * 0.001
-        random_factor = np.random.normal(0, volatility)
+        random_factor = random.gauss(0, volatility)  # Use random.gauss instead of np.random.normal
         price_change = trend_factor + random_factor
         
         # Update price
